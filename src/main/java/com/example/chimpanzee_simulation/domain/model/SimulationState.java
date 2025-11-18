@@ -16,4 +16,17 @@ public class SimulationState {
         this.environment = environment;
         this.randomSeed = randomSeed;
     }
+
+    // 테스트용 getter
+    int getTurnNumber() {
+        return turnNumber;
+    }
+
+    List<Chimpanzee> getChimpanzees() {
+        return chimpanzees;
+    }
+
+    Environment getEnvironment() {
+        return environment;
+    }
 }

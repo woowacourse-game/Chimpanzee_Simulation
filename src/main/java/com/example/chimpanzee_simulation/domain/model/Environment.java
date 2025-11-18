@@ -27,4 +27,17 @@ public class Environment {
 
         return new Environment(food, weather, dangerLevel);
     }
+
+    // 테스트용 getter
+    int getFood() {
+        return food;
+    }
+
+    Weather getWeather() {
+        return weather;
+    }
+
+    double getDangerLevel() {
+        return dangerLevel;
+    }
 }

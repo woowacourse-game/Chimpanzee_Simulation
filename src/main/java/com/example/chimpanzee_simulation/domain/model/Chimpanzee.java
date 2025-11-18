@@ -116,4 +116,53 @@ public class Chimpanzee {
         if (age <= 35) return AgeCategory.ADULT;
         return AgeCategory.ELDER;
     }
+
+    // 테스트용 getter
+    Long getId() {
+        return id;
+    }
+
+    int getAge() {
+        return age;
+    }
+
+    Sex getSex() {
+        return sex;
+    }
+
+    int getHealth() {
+        return health;
+    }
+
+    int getStrength() {
+        return strength;
+    }
+
+    int getAgility() {
+        return agility;
+    }
+
+    double getReproductionRate() {
+        return reproductionRate;
+    }
+
+    int getLongevity() {
+        return longevity;
+    }
+
+    boolean isAlpha() {
+        return alpha;
+    }
+
+    boolean isAlive() {
+        return alive;
+    }
+
+    DeathReason getDeathReason() {
+        return deathReason;
+    }
+
+    AgeCategory getAgeCategory() {
+        return ageCategory;
+    }
 }
