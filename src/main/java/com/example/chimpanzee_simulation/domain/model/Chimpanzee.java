@@ -41,23 +41,17 @@ public class Chimpanzee {
 
     // 초기 랜덤 객체 생성 전용
     public static Chimpanzee randomInitial(Long id, Random random) {
-        int age = random.nextInt(41);
+        int age = generateInitialAge(random);
         AgeCategory ageCategory = resolveAgeCategory(age);
 
-        Sex sex;
-        if (random.nextBoolean()) {
-            sex = Sex.MALE;
-        } else {
-            sex = Sex.FEMALE;
-        }
+        Sex sex = generateInitialSex(random);
 
-        int health = 60 + random.nextInt(41);
-        int strength = random.nextInt(101);
-        int agility = random.nextInt(101);
+        int health = generateInitialHealth(random);
+        int strength = generateInitialStrength(random);
+        int agility = generateInitialAgility(random);
 
-        double reproductionRate = random.nextDouble();
-
-        int longevity = 36 + random.nextInt(10);
+        double reproductionRate = generateInitialReproductionRate(random);
+        int longevity = generateInitialLongevity(random);
 
         return new Chimpanzee(
                 id,
@@ -75,6 +69,45 @@ public class Chimpanzee {
         );
     }
 
+    // 초기 나이를 생성한다 0 ~ 40살
+    private static int generateInitialAge(Random random) {
+        return random.nextInt(41); // 0~40
+    }
+
+    // 초기 성별을 무작위로 선택한다
+    private static Sex generateInitialSex(Random random) {
+        boolean male = random.nextBoolean();
+        if (male) {
+            return Sex.MALE;
+        } else {
+            return Sex.FEMALE;
+        }
+    }
+
+    // 초기 체력을 생성한다 60~100
+    private static int generateInitialHealth(Random random) {
+        return 60 + random.nextInt(41);
+    }
+
+    // 초기 힘 능력치를 생성한다. 0~100
+    private static int generateInitialStrength(Random random) {
+        return random.nextInt(101); // 0~100
+    }
+
+    // 초기 민첩 능력치를 생성한다. 0~100
+    private static int generateInitialAgility(Random random) {
+        return random.nextInt(101); // 0~100
+    }
+
+    private static double generateInitialReproductionRate(Random random) {
+        return random.nextDouble(); // 0.0 ~ 1.0
+    }
+
+    private static int generateInitialLongevity(Random random) {
+        return 36 + random.nextInt(10); // 36~45
+    }
+
+    // 나이를 기반으로 연령대 결정
     private static AgeCategory resolveAgeCategory(int age) {
         if (age <= 4) return AgeCategory.INFANT;
         if (age <= 7) return AgeCategory.JUVENILE;
