@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class TurnProcessorImpl implements TurnProcessor {
 
+    private final FoodProductionService foodProductionService;
+
+    public TurnProcessorImpl(FoodProductionService foodProductionService) {
+        this.foodProductionService = foodProductionService;
+    }
+
     @Override
     public TurnResult runTurn(SimulationState state) {
         int currentTurn = state.turn();
@@ -16,6 +22,9 @@ public class TurnProcessorImpl implements TurnProcessor {
         log.add("Turn " + currentTurn + " processed (stub).");
 
         // 나중에 여기 안에 환경/먹이/나이/건강/사망 룰이 들어감
+        //먹이
+        foodProductionService.produce(state, log);
+
         state.nextTurn();
 
         return new TurnResult(state, log);

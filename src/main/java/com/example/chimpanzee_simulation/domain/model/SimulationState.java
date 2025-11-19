@@ -46,4 +46,7 @@ public class SimulationState {
         return chimpanzees;
     }
 
+    public Environment environment() {
+        return environment;
+    }
 }
