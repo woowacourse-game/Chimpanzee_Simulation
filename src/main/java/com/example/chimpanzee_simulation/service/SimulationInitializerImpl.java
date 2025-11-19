@@ -3,15 +3,18 @@ package com.example.chimpanzee_simulation.service;
 import com.example.chimpanzee_simulation.domain.model.Chimpanzee;
 import com.example.chimpanzee_simulation.domain.model.Environment;
 import com.example.chimpanzee_simulation.domain.model.SimulationState;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@Service
 public class SimulationInitializerImpl implements SimulationInitializer {
 
     private static final int DEFAULT_INITIAL_POPULATION = 20;
 
+    @Override
     public SimulationState createInitialState() {
         long seed = System.currentTimeMillis();
         Random random = new Random(seed);
