@@ -42,4 +42,8 @@ public class SimulationState {
         return turnNumber;
     }
 
+    public List<Chimpanzee> chimpanzees() {
+        return chimpanzees;
+    }
+
 }
