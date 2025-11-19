@@ -23,8 +23,9 @@ public class Chimpanzee {
     private boolean alive;              // 살아있는지
     private DeathReason deathReason;    // enum { STARVATION, DISEASE, PREDATOR, OLD_AGE, OTHER, NONE }
     private AgeCategory ageCategory;    // enum { INFANT, JUVENILE, ADOLESCENT, YOUNG_ADULT, ADULT, ELDER}
+    private int birthTurn;
 
-    private Chimpanzee(Long id, int age, Sex sex, int health, int strength, int agility, double reproductionRate, int longevity, boolean alpha, boolean alive, DeathReason deathReason, AgeCategory ageCategory) {
+    private Chimpanzee(Long id, int age, Sex sex, int health, int strength, int agility, double reproductionRate, int longevity, boolean alpha, boolean alive, DeathReason deathReason, AgeCategory ageCategory, int birthTurn) {
         this.id = id;
         this.age = age;
         this.sex = sex;
@@ -37,10 +38,11 @@ public class Chimpanzee {
         this.alive = alive;
         this.deathReason = deathReason;
         this.ageCategory = ageCategory;
+        this.birthTurn = birthTurn;
     }
 
     // 초기 랜덤 객체 생성 전용
-    public static Chimpanzee randomInitial(Long id, Random random) {
+    public static Chimpanzee randomInitial(Long id, Random random, int currentTurn) {
         int age = generateInitialAge(random);
         AgeCategory ageCategory = resolveAgeCategory(age);
 
@@ -65,7 +67,8 @@ public class Chimpanzee {
                 false,
                 true,
                 DeathReason.NONE,
-                ageCategory
+                ageCategory,
+                currentTurn
         );
     }
 
@@ -115,6 +118,39 @@ public class Chimpanzee {
         if (age <= 20) return AgeCategory.YOUNG_ADULT;
         if (age <= 35) return AgeCategory.ADULT;
         return AgeCategory.ELDER;
+    }
+
+    // 나이 증가 체크
+    public boolean incrementAgeIfNeeded(int currentTurn) {
+        int diff = currentTurn - this.birthTurn;
+
+        if (diff <= 0) return false;
+
+        if (diff % 4 == 0) {
+            this.age += 1;
+            this.ageCategory = resolveAgeCategory(this.age);
+            return true;
+        }
+        return false;
+    }
+
+    // 자연사 판정
+    public boolean checkNaturalDeath(int currentTurn, Random random) {
+        if (this.age < this.longevity) {
+            return false; // 자연사 없음
+        }
+
+        double base = 0.1 * (this.age - this.longevity + 1);
+        if (base > 0.9) base = 0.9;
+
+        double r = random.nextDouble();
+
+        if (r < base) {
+            this.alive = false;
+            this.deathReason = DeathReason.OLD_AGE;
+            return true;
+        }
+        return false;
     }
 
     // 테스트용 getter
