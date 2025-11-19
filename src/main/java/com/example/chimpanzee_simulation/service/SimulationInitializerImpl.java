@@ -21,7 +21,7 @@ public class SimulationInitializerImpl implements SimulationInitializer {
 
         List<Chimpanzee> chimpanzees = new ArrayList<>();
         for (int i =0; i < DEFAULT_INITIAL_POPULATION; i++) {
-            chimpanzees.add(Chimpanzee.randomInitial((long) i+1, random));
+            chimpanzees.add(Chimpanzee.randomInitial((long) i+1, random,0));
         }
 
         Environment environment = Environment.randomInitial(DEFAULT_INITIAL_POPULATION, random);
