@@ -8,7 +8,7 @@ public class SimulationState {
     private List<Chimpanzee> chimpanzees;
     private Environment environment;
 
-    private long randomSeed;  // 재현성을 위해 필요하면 사용
+    private Long randomSeed;  // 재현성을 위해 필요하면 사용
 
     public SimulationState(int turnNumber, List<Chimpanzee> chimpanzees, Environment environment, long randomSeed) {
         this.turnNumber = turnNumber;
@@ -28,5 +28,13 @@ public class SimulationState {
 
     Environment getEnvironment() {
         return environment;
+    }
+
+    public long randomSeed() {
+        return randomSeed;
+    }
+
+    public void nextTurn() {
+        this.turnNumber += 1;
     }
 }
