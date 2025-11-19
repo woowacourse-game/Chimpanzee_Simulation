@@ -40,4 +40,23 @@ public class Environment {
     double getDangerLevel() {
         return dangerLevel;
     }
+
+    public Weather weather() {
+        return weather;
+    }
+
+    public double dangerLevel() {
+        return dangerLevel;
+    }
+
+    public int  food() {
+        return food;
+    }
+
+    public void addFood(int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        this.food += amount;
+    }
 }

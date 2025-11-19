@@ -41,6 +41,10 @@ public class Chimpanzee {
         this.birthTurn = birthTurn;
     }
 
+    public boolean alive() {
+        return alive;
+    }
+
     // 초기 랜덤 객체 생성 전용
     public static Chimpanzee randomInitial(Long id, Random random, int currentTurn) {
         int age = generateInitialAge(random);
