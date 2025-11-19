@@ -3,8 +3,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.chimpanzee_simulation.domain.enums.DeathReason;
 import com.example.chimpanzee_simulation.domain.enums.Weather;
-import com.example.chimpanzee_simulation.domain.service.SimulationInitializer;
-import com.example.chimpanzee_simulation.domain.service.SimulationInitializerImpl;
+import com.example.chimpanzee_simulation.service.SimulationInitializer;
+import com.example.chimpanzee_simulation.service.SimulationInitializerImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

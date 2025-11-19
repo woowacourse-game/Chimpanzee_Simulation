@@ -1,4 +1,4 @@
-package com.example.chimpanzee_simulation.domain.service;
+package com.example.chimpanzee_simulation.service;
 
 import com.example.chimpanzee_simulation.domain.model.Chimpanzee;
 import com.example.chimpanzee_simulation.domain.model.Environment;
