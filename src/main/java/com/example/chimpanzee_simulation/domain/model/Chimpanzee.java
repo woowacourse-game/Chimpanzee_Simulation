@@ -157,6 +157,20 @@ public class Chimpanzee {
         return false;
     }
 
+    // 사망과 사망이유 적용 메서드
+    public void applyAliveAndDeathReason(DeathReason deathReason) {
+        this.setDeathReason(deathReason);
+        this.setAlive(false);
+    }
+
+    private void setDeathReason(DeathReason deathReason) {
+        this.deathReason = deathReason;
+    }
+
+    private void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
     // 테스트용 getter
     Long getId() {
         return id;
