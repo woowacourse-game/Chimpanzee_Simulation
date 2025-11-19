@@ -37,4 +37,9 @@ public class SimulationState {
     public void nextTurn() {
         this.turnNumber += 1;
     }
+
+    public int turn() {
+        return turnNumber;
+    }
+
 }
