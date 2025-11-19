@@ -5,5 +5,15 @@ public enum Weather {
     NORMAL,
     RAINY,
     STORM,
-    DROUGHT
+    DROUGHT;
+
+    public double productionMultiplier() {
+        return switch (this) {
+            case SUNNY -> 1.3;
+            case NORMAL -> 1.0;
+            case RAINY -> 1.1;
+            case STORM -> 0.7;
+            case DROUGHT -> 0.4;
+        };
+    }
 }
