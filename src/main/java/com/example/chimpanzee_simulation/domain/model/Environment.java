@@ -16,6 +16,11 @@ public class Environment {
         this.dangerLevel = dangerLevel;
     }
 
+    public static Environment of(int food, Weather weather, double dangerLevel) {
+        return new Environment(food, weather, dangerLevel);
+    }
+
+
     public static Environment randomInitial(int count, Random random) {
         int food = count * 5;
 
