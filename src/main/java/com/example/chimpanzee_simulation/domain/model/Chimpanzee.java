@@ -164,12 +164,37 @@ public class Chimpanzee {
         this.health = 0;
     }
 
+    public void applyHealthChange(int delta) {
+        if (!alive) {
+            return;
+        }
+        this.health += delta;
+        if (this.health > 100) {
+            this.health = 100;
+        }
+        if (this.health < 0) {
+            this.health = 0;
+        }
+    }
+
     private void setDeathReason(DeathReason deathReason) {
         this.deathReason = deathReason;
     }
 
     private void setAlive(boolean alive) {
         this.alive = alive;
+    }
+
+    public Sex sex(){
+        return sex;
+    }
+
+    public AgeCategory ageCategory(){
+        return ageCategory;
+    }
+
+    public boolean alpha(){
+        return alpha;
     }
 
     // 테스트용 getter
