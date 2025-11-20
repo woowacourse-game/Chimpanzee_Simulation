@@ -161,6 +161,20 @@ public class Chimpanzee {
     public void applyAliveAndDeathReason(DeathReason deathReason) {
         this.setDeathReason(deathReason);
         this.setAlive(false);
+        this.health = 0;
+    }
+
+    public void applyHealthChange(int delta) {
+        if (!alive) {
+            return;
+        }
+        this.health += delta;
+        if (this.health > 100) {
+            this.health = 100;
+        }
+        if (this.health < 0) {
+            this.health = 0;
+        }
     }
 
     private void setDeathReason(DeathReason deathReason) {
@@ -171,6 +185,20 @@ public class Chimpanzee {
         this.alive = alive;
     }
 
+    public Sex sex(){
+        return sex;
+    }
+
+    public AgeCategory ageCategory(){
+        return ageCategory;
+    }
+
+    public boolean alpha(){
+        return alpha;
+    }
+    public int health(){
+        return health;
+    }
     // 테스트용 getter
     Long getId() {
         return id;
