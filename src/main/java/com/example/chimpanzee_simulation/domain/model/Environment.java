@@ -64,4 +64,14 @@ public class Environment {
         }
         this.food += amount;
     }
+
+    public void consumeFood(int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        if (amount > this.food) {
+            amount = this.food;
+        }
+        this.food -= amount;
+    }
 }
