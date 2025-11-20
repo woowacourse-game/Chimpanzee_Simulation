@@ -161,6 +161,7 @@ public class Chimpanzee {
     public void applyAliveAndDeathReason(DeathReason deathReason) {
         this.setDeathReason(deathReason);
         this.setAlive(false);
+        this.health = 0;
     }
 
     private void setDeathReason(DeathReason deathReason) {
