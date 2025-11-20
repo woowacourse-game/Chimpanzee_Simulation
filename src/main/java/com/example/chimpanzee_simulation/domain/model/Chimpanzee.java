@@ -196,7 +196,9 @@ public class Chimpanzee {
     public boolean alpha(){
         return alpha;
     }
-
+    public int health(){
+        return health;
+    }
     // 테스트용 getter
     Long getId() {
         return id;

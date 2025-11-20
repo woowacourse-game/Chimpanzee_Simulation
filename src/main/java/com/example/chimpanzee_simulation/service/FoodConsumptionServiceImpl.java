@@ -1,6 +1,7 @@
 package com.example.chimpanzee_simulation.service;
 
 import com.example.chimpanzee_simulation.domain.enums.AgeCategory;
+import com.example.chimpanzee_simulation.domain.enums.DeathReason;
 import com.example.chimpanzee_simulation.domain.enums.Sex;
 import com.example.chimpanzee_simulation.domain.model.Chimpanzee;
 import com.example.chimpanzee_simulation.domain.model.Environment;
@@ -38,7 +39,6 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
                 .sorted(Comparator.comparingInt(this::priorityLevel))
                 .toList();
 
-        // 3. 우선순위 순으로 먹이 배분
         for (Chimpanzee chimp : sorted) {
             int need = individualNeed(chimp);
 
@@ -48,6 +48,8 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
 
             if (remainingFood <= 0) {
                 chimp.applyHealthChange(MAX_HUNGER_PENALTY);
+                handleStarvationDeathIfNeeded(chimp, log);
+
                 log.add("[FOOD_CONSUMPTION] chimp=" + chimpLogKey(chimp)
                         + ", need=" + need
                         + ", consumed=0"
@@ -82,6 +84,7 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
                 env.consumeFood(consumed);
 
                 chimp.applyHealthChange(penalty);
+                handleStarvationDeathIfNeeded(chimp, log);
 
                 log.add("[FOOD_CONSUMPTION] chimp=" + chimpLogKey(chimp)
                         + ", need=" + need
@@ -96,6 +99,12 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
                 + ", foodAfter=" + env.food());
     }
 
+    private void handleStarvationDeathIfNeeded(Chimpanzee chimp, TurnLog log) {
+        if (chimp.alive() && chimp.health() <= 0) {
+            chimp.applyAliveAndDeathReason(DeathReason.STARVATION);
+            log.add("[DEATH] chimp died by starvation");
+        }
+    }
 
     private int priorityLevel(Chimpanzee chimp) {
         AgeCategory ageCategory = chimp.ageCategory();
