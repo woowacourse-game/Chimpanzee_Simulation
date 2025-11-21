@@ -138,7 +138,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         ));
 
         // 3-4. 결투 및 피해 처리
-        resolveCombat(state, log, alpha, challenger, random);
+        resolveCombat(log, alpha, challenger, random);
     }
 
     /**
@@ -158,8 +158,10 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
      * fightScore = strength * 0.6 + agility * 0.4 + random(0~10)
      * 점수 차이(diff)에 비례하여 패자 피해량을 20 ~ 80로 스케일링
      */
-    private void resolveCombat(SimulationState state, TurnLog log,
-                               Chimpanzee alpha, Chimpanzee challenger, Random random) {
+    private void resolveCombat(TurnLog log,
+                               Chimpanzee alpha,
+                               Chimpanzee challenger,
+                               Random random) {
 
         double alphaScore = fightScore(alpha, random);
         double challengerScore = fightScore(challenger, random);
