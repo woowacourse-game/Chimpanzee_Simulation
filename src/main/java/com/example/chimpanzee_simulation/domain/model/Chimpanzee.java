@@ -171,6 +171,7 @@ public class Chimpanzee {
         this.setDeathReason(deathReason);
         this.setAlive(false);
         this.health = 0;
+        this.alpha = false;
     }
 
     public void applyHealthChange(int delta) {
@@ -303,6 +304,16 @@ public class Chimpanzee {
 
     private void setAlive(boolean alive) {
         this.alive = alive;
+    }
+
+    // 이 개체를 알파로 지정
+    public void assignAlpha() {
+        this.alpha = true;
+    }
+
+    // 이 개체를 알파에서 해제
+    public void revokeAlpha() {
+        this.alpha = false;
     }
 
     public Sex sex(){
