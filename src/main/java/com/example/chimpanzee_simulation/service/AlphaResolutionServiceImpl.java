@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class AlphaResolutionServiceImpl implements AlphaResolutionService {
@@ -73,7 +72,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         }
 
         List<ChimpanzeeScore> scored = candidates.stream()
-                .map(c -> new ChimpanzeeScore(c, c.strength() * 0.7 + c.agility() * 0.3))
+                .map(c -> new ChimpanzeeScore(c, c.getStrength() * 0.7 + c.getAgility() * 0.3))
                 .toList();
 
         double maxScore = scored.stream()
