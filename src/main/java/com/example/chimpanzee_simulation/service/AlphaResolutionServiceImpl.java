@@ -65,7 +65,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
                 .filter(c -> c.sex() == Sex.MALE)
                 .filter(c -> c.ageCategory() == AgeCategory.YOUNG_ADULT || c.ageCategory() == AgeCategory.ADULT)
                 .filter(c -> c.health() >= 60)
-                .collect(Collectors.toList());
+                .toList();
 
         if (candidates.isEmpty()) {
             log.add("[ALPHA] No eligible candidates. Alpha remains empty.");
@@ -74,7 +74,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
 
         List<ChimpanzeeScore> scored = candidates.stream()
                 .map(c -> new ChimpanzeeScore(c, c.strength() * 0.7 + c.agility() * 0.3))
-                .collect(Collectors.toList());
+                .toList();
 
         double maxScore = scored.stream()
                 .mapToDouble(s -> s.score)
@@ -83,7 +83,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
 
         List<ChimpanzeeScore> top = scored.stream()
                 .filter(s -> s.score == maxScore)
-                .collect(Collectors.toList());
+                .toList();
 
         ChimpanzeeScore winner = top.get(random.nextInt(top.size()));
 
@@ -122,8 +122,8 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
                 .filter(c -> c.sex() == Sex.MALE)
                 .filter(c -> c.ageCategory() == AgeCategory.YOUNG_ADULT || c.ageCategory() == AgeCategory.ADULT)
                 .filter(c -> c != alpha)
-                .filter(c -> c.strength() > alpha.strength() * 0.8)
-                .collect(Collectors.toList());
+                .filter(c -> c.getStrength() > alpha.getStrength() * 0.8)
+                .toList();
 
         if (challengerCandidates.isEmpty()) {
             log.add("[ALPHA] Alpha is weak, but no challenger is strong enough.");
@@ -151,7 +151,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         if (alpha.health() < 50) {
             return true;
         }
-        return alpha.age() > alpha.longevity() * 0.8;
+        return alpha.getAge() > alpha.getLongevity() * 0.8;
     }
 
     /**
@@ -236,7 +236,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
     }
 
     private double fightScore(Chimpanzee chimp, Random random) {
-        double ability = chimp.strength() * 0.6 + chimp.agility() * 0.4;
+        double ability = chimp.getStrength() * 0.6 + chimp.getAgility() * 0.4;
         double randomness = random.nextInt(11); // 0~10
         return ability + randomness;
     }
@@ -256,7 +256,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
     }
 
     private Random createRandomFromState(SimulationState state) {
-        return new Random(state.seed()); // 현재는 seed() 가 있다고 가정
+        return new Random(state.randomSeed());
     }
 
     private String chimpLogKey(Chimpanzee chimp) {

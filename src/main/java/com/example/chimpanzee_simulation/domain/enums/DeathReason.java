@@ -6,5 +6,6 @@ public enum DeathReason {
     PREDATOR,
     OLD_AGE,
     OTHER,
+    ALPHA_FIGHT,
     NONE
 }
