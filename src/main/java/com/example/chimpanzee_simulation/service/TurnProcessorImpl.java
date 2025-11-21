@@ -11,13 +11,16 @@ public class TurnProcessorImpl implements TurnProcessor {
     private final FoodProductionService foodProductionService;
     private final FoodConsumptionService foodConsumptionService;
     private final ReproductionService reproductionService;
+    private final AlphaResolutionService alphaResolutionService;
 
     public TurnProcessorImpl(FoodProductionService foodProductionService,
                              FoodConsumptionService foodConsumptionService,
-                             ReproductionService reproductionService) {
+                             ReproductionService reproductionService,
+                             AlphaResolutionService alphaResolutionService) {
         this.foodProductionService = foodProductionService;
         this.foodConsumptionService = foodConsumptionService;
         this.reproductionService = reproductionService;
+        this.alphaResolutionService = alphaResolutionService;
     }
 
     @Override
@@ -30,6 +33,9 @@ public class TurnProcessorImpl implements TurnProcessor {
         // 나중에 여기 안에 환경/먹이/나이/건강/사망 룰이 들어감
         // 1) 먹이 생산
         foodProductionService.produce(state, log);
+
+        // 3) 알파 선출 & 도전 규칙
+        alphaResolutionService.resolveAlpha(state, log);
 
         // 2) 먹이 소비 및 우선순위 기반 배분
         foodConsumptionService.consumeAndDistribute(state, log);
