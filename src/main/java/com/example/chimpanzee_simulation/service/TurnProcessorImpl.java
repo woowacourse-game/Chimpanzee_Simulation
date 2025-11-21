@@ -12,15 +12,18 @@ public class TurnProcessorImpl implements TurnProcessor {
     private final FoodConsumptionService foodConsumptionService;
     private final ReproductionService reproductionService;
     private final AgingService agingService;
+    private final AlphaResolutionService alphaResolutionService;
 
     public TurnProcessorImpl(FoodProductionService foodProductionService,
                              FoodConsumptionService foodConsumptionService,
                              ReproductionService reproductionService,
-                             AgingService agingService) {
+                             AgingService agingService,
+                             AlphaResolutionService alphaResolutionService) {
         this.foodProductionService = foodProductionService;
         this.foodConsumptionService = foodConsumptionService;
         this.reproductionService = reproductionService;
         this.agingService = agingService;
+        this.alphaResolutionService = alphaResolutionService;
     }
 
     @Override
@@ -36,9 +39,14 @@ public class TurnProcessorImpl implements TurnProcessor {
         agingService.applyAgingAndNaturalDeath(state, log);
         // 1) 먹이 생산
         foodProductionService.produce(state, log);
-        // 2) 먹이 소비 및 우선순위 기반 배분
+
+        // 2) 알파 선출 & 도전 규칙
+        alphaResolutionService.resolveAlpha(state, log);
+
+        // 3) 먹이 소비 및 우선순위 기반 배분
         foodConsumptionService.consumeAndDistribute(state, log);
-        // 3) 출산 처리 / 번식 처리
+
+        // 4) 출산 처리 / 번식 처리
         reproductionService.process(state, log);
 
         state.nextTurn();
