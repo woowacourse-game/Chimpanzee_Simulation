@@ -258,6 +258,45 @@ public class Chimpanzee {
         return Math.max(0, Math.min(100, (int) Math.round(result)));
     }
 
+    public static Chimpanzee ofFull(
+            Long id,
+            int age,
+            Sex sex,
+            int health,
+            int strength,
+            int agility,
+            double reproductionRate,
+            int longevity,
+            boolean alpha,
+            boolean alive,
+            DeathReason deathReason,
+            AgeCategory ageCategory,
+            int birthTurn,
+            boolean pregnant,
+            int pregnancyDueTurn,
+            Long pregnancyFatherId
+    ) {
+        Chimpanzee chimp = new Chimpanzee(
+                id,
+                age,
+                sex,
+                health,
+                strength,
+                agility,
+                reproductionRate,
+                longevity,
+                alpha,
+                alive,
+                deathReason,
+                ageCategory,
+                birthTurn,
+                pregnant,
+                pregnancyDueTurn
+        );
+        chimp.pregnancyFatherId = pregnancyFatherId;
+        return chimp;
+    }
+
     private void setDeathReason(DeathReason deathReason) {
         this.deathReason = deathReason;
     }
