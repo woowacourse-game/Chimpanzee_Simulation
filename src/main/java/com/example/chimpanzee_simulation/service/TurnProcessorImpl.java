@@ -11,15 +11,18 @@ public class TurnProcessorImpl implements TurnProcessor {
     private final FoodProductionService foodProductionService;
     private final FoodConsumptionService foodConsumptionService;
     private final ReproductionService reproductionService;
+    private final AgingService agingService;
     private final AlphaResolutionService alphaResolutionService;
 
     public TurnProcessorImpl(FoodProductionService foodProductionService,
                              FoodConsumptionService foodConsumptionService,
                              ReproductionService reproductionService,
+                             AgingService agingService,
                              AlphaResolutionService alphaResolutionService) {
         this.foodProductionService = foodProductionService;
         this.foodConsumptionService = foodConsumptionService;
         this.reproductionService = reproductionService;
+        this.agingService = agingService;
         this.alphaResolutionService = alphaResolutionService;
     }
 
@@ -31,6 +34,9 @@ public class TurnProcessorImpl implements TurnProcessor {
         log.add("Turn " + currentTurn + " processed (stub).");
 
         // 나중에 여기 안에 환경/먹이/나이/건강/사망 룰이 들어감
+
+        // 0) 나이 증가 + 자연사 판정
+        agingService.applyAgingAndNaturalDeath(state, log);
         // 1) 먹이 생산
         foodProductionService.produce(state, log);
 
