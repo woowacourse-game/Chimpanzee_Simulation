@@ -10,12 +10,14 @@ public class TurnProcessorImpl implements TurnProcessor {
 
     private final FoodProductionService foodProductionService;
     private final FoodConsumptionService foodConsumptionService;
+    private final ReproductionService reproductionService;
 
     public TurnProcessorImpl(FoodProductionService foodProductionService,
-                             FoodConsumptionService foodConsumptionService ) {
+                             FoodConsumptionService foodConsumptionService,
+                             ReproductionService reproductionService) {
         this.foodProductionService = foodProductionService;
         this.foodConsumptionService = foodConsumptionService;
-
+        this.reproductionService = reproductionService;
     }
 
     @Override
@@ -32,6 +34,8 @@ public class TurnProcessorImpl implements TurnProcessor {
         // 2) 먹이 소비 및 우선순위 기반 배분
         foodConsumptionService.consumeAndDistribute(state, log);
 
+        // 3) 출산 처리 / 번식 처리
+        reproductionService.process(state, log);
 
         state.nextTurn();
 

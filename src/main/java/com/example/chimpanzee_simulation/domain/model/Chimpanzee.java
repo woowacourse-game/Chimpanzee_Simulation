@@ -7,6 +7,7 @@ import com.example.chimpanzee_simulation.domain.enums.Sex;
 import java.util.Random;
 
 public class Chimpanzee {
+    private static final int GESTATION_PERIOD = 3;
 
     private Long id;
     private int age;                    // 턴 4개 -> 1년 (+1살)
@@ -25,7 +26,11 @@ public class Chimpanzee {
     private AgeCategory ageCategory;    // enum { INFANT, JUVENILE, ADOLESCENT, YOUNG_ADULT, ADULT, ELDER}
     private int birthTurn;
 
-    private Chimpanzee(Long id, int age, Sex sex, int health, int strength, int agility, double reproductionRate, int longevity, boolean alpha, boolean alive, DeathReason deathReason, AgeCategory ageCategory, int birthTurn) {
+    private boolean pregnant;
+    private int pregnancyDueTurn;
+    private Long pregnancyFatherId;     // 임신 중인 상태에서 아버지 ID 저장
+
+    private Chimpanzee(Long id, int age, Sex sex, int health, int strength, int agility, double reproductionRate, int longevity, boolean alpha, boolean alive, DeathReason deathReason, AgeCategory ageCategory, int birthTurn, boolean pregnant, int pregnancyDueTurn) {
         this.id = id;
         this.age = age;
         this.sex = sex;
@@ -39,6 +44,8 @@ public class Chimpanzee {
         this.deathReason = deathReason;
         this.ageCategory = ageCategory;
         this.birthTurn = birthTurn;
+        this.pregnant = pregnant;
+        this.pregnancyDueTurn = pregnancyDueTurn;
     }
 
     public boolean alive() {
@@ -72,7 +79,9 @@ public class Chimpanzee {
                 true,
                 DeathReason.NONE,
                 ageCategory,
-                currentTurn
+                currentTurn,
+                false,
+                -1
         );
     }
 
@@ -177,6 +186,117 @@ public class Chimpanzee {
         }
     }
 
+    // 임신 가능 상태인지 검사
+    public boolean canMate() {
+        if (!alive) return false;
+        if (pregnant) return false;
+        if (health <50) return false;
+
+        return ageCategory == AgeCategory.YOUNG_ADULT || ageCategory == AgeCategory.ADULT;
+    }
+
+    // 임신 시작 처리
+    public void conceive(int currentTurn, Long fatherId) {
+        this.pregnant = true;
+        this.pregnancyDueTurn = currentTurn + GESTATION_PERIOD;
+        this.pregnancyFatherId = fatherId;
+    }
+
+    // 출산 처리(상태 리셋)
+    public void giveBirth() {
+        this.pregnant = false;
+        this.pregnancyDueTurn = -1;
+        this.pregnancyFatherId = null;
+    }
+
+    // ** 부모의 유전자를 받아 자손 생성 (추후 팩토리로)
+    public static Chimpanzee createOffspring(Long newId, Chimpanzee father, Chimpanzee mother, int currentTurn, Random random) {
+
+        Sex newSex = generateInitialSex(random);
+
+        // 능력치 유전
+        int newStrength = inheritStat(father.strength, mother.strength, random);
+        int newAgility = inheritStat(father.agility, mother.agility, random);
+        int newLongevity = inheritStat(father.longevity, mother.longevity, random);
+
+        // 새로운 침팬지의 체력은 100
+        int newHealth = 100;
+        double newReproductionRate = random.nextDouble();
+
+        // 아기 침팬지 생성
+        return new Chimpanzee(
+                newId,
+                0,      // age
+                newSex,
+                newHealth,
+                newStrength,
+                newAgility,
+                newReproductionRate,
+                newLongevity,
+                false,      // alpha
+                true,       // alive
+                DeathReason.NONE,
+                AgeCategory.INFANT,
+                currentTurn,
+                false,      // pregnant
+                -1      // dueTurn
+        );
+    }
+
+    // 부모 평균의 ±10% 범위 내에서 랜덤 값 결정
+    private static int inheritStat(int val1, int val2, Random random) {
+        double avg = (val1 + val2) / 2.0;
+        double variance = avg * 0.1;    // 10%
+
+        double min = avg - variance;
+        double max = avg + variance;
+
+        // min ~ max 사이 랜덤
+        double result = min + (max - min) * random.nextDouble();
+
+        // 0 ~ 100 벗어나는 값 방지
+        return Math.max(0, Math.min(100, (int) Math.round(result)));
+    }
+
+    public static Chimpanzee ofFull(
+            Long id,
+            int age,
+            Sex sex,
+            int health,
+            int strength,
+            int agility,
+            double reproductionRate,
+            int longevity,
+            boolean alpha,
+            boolean alive,
+            DeathReason deathReason,
+            AgeCategory ageCategory,
+            int birthTurn,
+            boolean pregnant,
+            int pregnancyDueTurn,
+            Long pregnancyFatherId
+    ) {
+        Chimpanzee chimp = new Chimpanzee(
+                id,
+                age,
+                sex,
+                health,
+                strength,
+                agility,
+                reproductionRate,
+                longevity,
+                alpha,
+                alive,
+                deathReason,
+                ageCategory,
+                birthTurn,
+                pregnant,
+                pregnancyDueTurn
+        );
+        chimp.pregnancyFatherId = pregnancyFatherId;
+        return chimp;
+    }
+
     private void setDeathReason(DeathReason deathReason) {
         this.deathReason = deathReason;
     }
@@ -199,52 +319,64 @@ public class Chimpanzee {
     public int health(){
         return health;
     }
-    // 테스트용 getter
-    Long getId() {
+
+    public Long getId() {
         return id;
     }
 
-    int getAge() {
+    public int getAge() {
         return age;
     }
 
-    Sex getSex() {
+    public Sex getSex() {
         return sex;
     }
 
-    int getHealth() {
+    public int getHealth() {
         return health;
     }
 
-    int getStrength() {
+    public int getStrength() {
         return strength;
     }
 
-    int getAgility() {
+    public int getAgility() {
         return agility;
     }
 
-    double getReproductionRate() {
+    public double getReproductionRate() {
         return reproductionRate;
     }
 
-    int getLongevity() {
+    public int getLongevity() {
         return longevity;
     }
 
-    boolean isAlpha() {
+    public boolean isAlpha() {
         return alpha;
     }
 
-    boolean isAlive() {
+    public boolean isAlive() {
         return alive;
     }
 
-    DeathReason getDeathReason() {
+    public DeathReason getDeathReason() {
         return deathReason;
     }
 
-    AgeCategory getAgeCategory() {
+    public AgeCategory getAgeCategory() {
         return ageCategory;
+    }
+
+    public boolean isPregnant() {
+        return pregnant;
+    }
+
+    public int getPregnancyDueTurn() {
+        return pregnancyDueTurn;
+    }
+
+    public Long getPregnancyFatherId() {
+        return pregnancyFatherId;
     }
 }
