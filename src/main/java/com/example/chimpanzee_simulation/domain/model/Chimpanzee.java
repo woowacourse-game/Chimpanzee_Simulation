@@ -60,8 +60,8 @@ public class Chimpanzee {
         Sex sex = generateInitialSex(random);
 
         int health = generateInitialHealth(random);
-        int strength = generateInitialStrength(random);
-        int agility = generateInitialAgility(random);
+        int strength = generateInitialStrength(ageCategory, random);
+        int agility = generateInitialAgility(ageCategory, random);
 
         double reproductionRate = generateInitialReproductionRate(random);
         int longevity = generateInitialLongevity(random);
@@ -105,14 +105,36 @@ public class Chimpanzee {
         return 60 + random.nextInt(41);
     }
 
-    // 초기 힘 능력치를 생성한다. 0~100
-    private static int generateInitialStrength(Random random) {
-        return random.nextInt(101); // 0~100
+    // 연령대 기반 초기 힘 능력치를 생성한다.
+    private static int generateInitialStrength(AgeCategory ageCategory, Random random) {
+        switch (ageCategory) {
+            case INFANT:
+                // 0~30
+                return randomBetween(random, 0, 25);
+            case JUVENILE:
+                // 20~60
+                return randomBetween(random, 20, 60);
+            case ADOLESCENT:
+                // 40~80
+                return randomBetween(random, 40, 80);
+            case YOUNG_ADULT:
+                // 50~90
+                return randomBetween(random, 50, 90);
+            case ADULT:
+                // 60~95
+                return randomBetween(random, 60, 95);
+            case ELDER:
+                // 40~80
+                return randomBetween(random, 40, 80);
+            default:
+                return random.nextInt(101);
+        }
     }
 
-    // 초기 민첩 능력치를 생성한다. 0~100
-    private static int generateInitialAgility(Random random) {
-        return random.nextInt(101); // 0~100
+    // 연령대 기반 초기 민첩 능력치를 생성한다. (현재는 힘과 동일 범위)
+    private static int generateInitialAgility(AgeCategory ageCategory, Random random) {
+        // 힘과 동일한 분포를 사용하지만, 필요 시 다르게 조정 가능
+        return generateInitialStrength(ageCategory, random);
     }
 
     private static double generateInitialReproductionRate(Random random) {
