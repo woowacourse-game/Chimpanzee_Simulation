@@ -15,7 +15,7 @@ import java.util.Random;
 public class AlphaResolutionServiceImpl implements AlphaResolutionService {
 
     // 알파 도전 이벤트 발생 확률 (30%)
-    private static final double CHALLENGE_PROBABILITY = 0.3;
+    private static final double CHALLENGE_PROBABILITY = 0.4;
 
     @Override
     public void resolveAlpha(SimulationState state, TurnLog log) {
