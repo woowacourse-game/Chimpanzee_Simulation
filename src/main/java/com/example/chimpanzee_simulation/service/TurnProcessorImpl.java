@@ -1,10 +1,14 @@
 package com.example.chimpanzee_simulation.service;
 
+import com.example.chimpanzee_simulation.domain.enums.Weather;
 import com.example.chimpanzee_simulation.domain.model.Chimpanzee;
+import com.example.chimpanzee_simulation.domain.model.Environment;
 import com.example.chimpanzee_simulation.domain.model.SimulationState;
 import com.example.chimpanzee_simulation.domain.model.TurnLog;
 import com.example.chimpanzee_simulation.domain.model.TurnResult;
 import org.springframework.stereotype.Service;
+
+import java.util.Random;
 
 @Service
 public class TurnProcessorImpl implements TurnProcessor {
@@ -33,6 +37,8 @@ public class TurnProcessorImpl implements TurnProcessor {
 
         TurnLog log = new TurnLog(currentTurn);
         log.add("턴 " + currentTurn + " 처리 시작.");
+
+        updateWeatherIfPossible(state, log);
         addAlphaSummary(state, log);
 
         // 0) 나이 증가 + 자연사 판정
@@ -52,6 +58,24 @@ public class TurnProcessorImpl implements TurnProcessor {
         state.nextTurn();
 
         return new TurnResult(state, log);
+    }
+
+    private void updateWeatherIfPossible(SimulationState state, TurnLog log) {
+        Environment env = state.environment();
+        if (env == null) {
+            return;
+        }
+
+        Weather before = env.weather();
+        Random random = state.random();
+        Weather after = env.updateWeather(random);
+
+        if (before == after) {
+            // 변동이 없는 경우는 로그를 생략하거나 짧게 남길 수 있다.
+            log.add("날씨 변화 없음 (현재: " + after + ")");
+        } else {
+            log.add("날씨 변화: " + before + " → " + after);
+        }
     }
 
     private void addAlphaSummary(SimulationState state, TurnLog log) {

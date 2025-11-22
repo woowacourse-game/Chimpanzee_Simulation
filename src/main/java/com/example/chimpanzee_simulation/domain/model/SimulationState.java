@@ -1,6 +1,7 @@
 package com.example.chimpanzee_simulation.domain.model;
 
 import java.util.List;
+import java.util.Random;
 
 public class SimulationState {
 
@@ -9,12 +10,14 @@ public class SimulationState {
     private Environment environment;
 
     private Long randomSeed;  // 재현성을 위해 필요하면 사용
+    private final Random random;
 
     public SimulationState(int turnNumber, List<Chimpanzee> chimpanzees, Environment environment, long randomSeed) {
         this.turnNumber = turnNumber;
         this.chimpanzees = chimpanzees;
         this.environment = environment;
         this.randomSeed = randomSeed;
+        this.random = new Random(randomSeed);
     }
 
     // 테스트용 getter
@@ -32,6 +35,10 @@ public class SimulationState {
 
     public long randomSeed() {
         return randomSeed;
+    }
+
+    public Random random() {
+        return random;
     }
 
     public void nextTurn() {
