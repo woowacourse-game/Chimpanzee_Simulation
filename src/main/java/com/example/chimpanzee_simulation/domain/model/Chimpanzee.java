@@ -133,6 +133,101 @@ public class Chimpanzee {
         return AgeCategory.ELDER;
     }
 
+    /**
+     * 연령대별 능력치 성장/하락 곡선에서
+     * 한 살 증가 시 strength/agility에 적용할 변화량(Δ)를 샘플링한다.
+     *
+     * 이 메서드는 아직 어디에서도 호출되지 않으며,
+     * 이후 나이 증가 로직에 연결하여 실제 stat 성장/하락을 적용하는 데 사용된다.
+     */
+    private static int sampleGrowthDelta(AgeCategory ageCategory, Random random) {
+        double r = random.nextDouble();
+
+        switch (ageCategory) {
+            case INFANT:
+                // INFANT (0–4세)
+                // 20%: +1~+2, 60%: +3~+5, 20%: +6~+7
+                if (r < 0.2) {
+                    return randomBetween(random, 1, 2);
+                } else if (r < 0.8) {
+                    return randomBetween(random, 3, 5);
+                } else {
+                    return randomBetween(random, 6, 7);
+                }
+            case JUVENILE:
+                // JUVENILE (5–7세)
+                // 20%: +1~+2, 60%: +3~+4, 20%: +5~+6
+                if (r < 0.2) {
+                    return randomBetween(random, 1, 2);
+                } else if (r < 0.8) {
+                    return randomBetween(random, 3, 4);
+                } else {
+                    return randomBetween(random, 5, 6);
+                }
+            case ADOLESCENT:
+                // ADOLESCENT (8–12세)
+                // 30%: +1~+2, 50%: +3~+4, 20%: +5
+                if (r < 0.3) {
+                    return randomBetween(random, 1, 2);
+                } else if (r < 0.8) {
+                    return randomBetween(random, 3, 4);
+                } else {
+                    return 5;
+                }
+            case YOUNG_ADULT:
+                // YOUNG_ADULT (13–20세)
+                // 10%: +2~+3, 40%: 0~+1, 30%: -1~0, 20%: -2~-3
+                if (r < 0.1) {
+                    return randomBetween(random, 2, 3);
+                } else if (r < 0.5) {
+                    return randomBetween(random, 0, 1);
+                } else if (r < 0.8) {
+                    return randomBetween(random, -1, 0);
+                } else {
+                    return randomBetween(random, -3, -2);
+                }
+            case ADULT:
+                // ADULT (21–35세)
+                // 5%: +2, 25%: 0~+1, 40%: -1~-2, 30%: -3~-4
+                if (r < 0.05) {
+                    return 2;
+                } else if (r < 0.30) {
+                    return randomBetween(random, 0, 1);
+                } else if (r < 0.70) {
+                    return randomBetween(random, -2, -1);
+                } else {
+                    return randomBetween(random, -4, -3);
+                }
+            case ELDER:
+                // ELDER (36세 이상)
+                // 5%: +1, 20%: 0, 35%: -1~-2, 40%: -3~-5
+                if (r < 0.05) {
+                    return 1;
+                } else if (r < 0.25) {
+                    return 0;
+                } else if (r < 0.60) {
+                    return randomBetween(random, -2, -1);
+                } else {
+                    return randomBetween(random, -5, -3);
+                }
+            default:
+                // 방어적 기본값: 변화 없음
+                return 0;
+        }
+    }
+
+    private static int randomBetween(Random random, int minInclusive, int maxInclusive) {
+        if (minInclusive == maxInclusive) {
+            return minInclusive;
+        }
+        if (minInclusive > maxInclusive) {
+            int tmp = minInclusive;
+            minInclusive = maxInclusive;
+            maxInclusive = tmp;
+        }
+        return minInclusive + random.nextInt(maxInclusive - minInclusive + 1);
+    }
+
     // 나이 증가 체크
     public boolean incrementAgeIfNeeded(int currentTurn) {
         int diff = currentTurn - this.birthTurn;
