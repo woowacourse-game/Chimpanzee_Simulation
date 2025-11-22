@@ -14,8 +14,8 @@ import java.util.Random;
 @Service
 public class AlphaResolutionServiceImpl implements AlphaResolutionService {
 
-    // 알파 도전 이벤트 발생 확률 (20%)
-    private static final double CHALLENGE_PROBABILITY = 0.2;
+    // 알파 도전 이벤트 발생 확률 (30%)
+    private static final double CHALLENGE_PROBABILITY = 0.3;
 
     @Override
     public void resolveAlpha(SimulationState state, TurnLog log) {
@@ -121,7 +121,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
                 .filter(c -> c.sex() == Sex.MALE)
                 .filter(c -> c.ageCategory() == AgeCategory.YOUNG_ADULT || c.ageCategory() == AgeCategory.ADULT)
                 .filter(c -> c != alpha)
-                .filter(c -> c.getStrength() > alpha.getStrength() * 0.8)
+                .filter(c -> c.getStrength() > alpha.getStrength() * 0.7)
                 .toList();
 
         if (challengerCandidates.isEmpty()) {
