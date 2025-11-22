@@ -1,7 +1,9 @@
 package com.example.chimpanzee_simulation.service.ui;
 
+import com.example.chimpanzee_simulation.domain.enums.AgeCategory;
 import com.example.chimpanzee_simulation.domain.model.Chimpanzee;
 import com.example.chimpanzee_simulation.domain.model.SimulationState;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,13 +11,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Function;
 
+@Component
 public class ChimpanzeeTableScreen {
 
-    private final Scanner scanner;
-
-    public ChimpanzeeTableScreen(Scanner scanner) {
-        this.scanner = scanner;
-    }
+    private final Scanner scanner = new Scanner(System.in);
 
     /** 표 전용 화면: 대체 스크린 버퍼에서 표를 렌더링하고 내부 입력 루프를 돈다. */
     public void open(SimulationState state) {
@@ -83,8 +82,8 @@ public class ChimpanzeeTableScreen {
 
         // === 컬럼 정의 ===
         String[] headers = {
-                "ID","성별","나이","연령대","건강","힘","민첩",
-                "번식률","수명","알파","생존","사망사유","임신","분만예정","아버지ID"
+                "ID","Sex","Age","AgeCat","Health","Str","Agi",
+                "Repro","Longev","Alpha","Alive","Death","Preg","Due","FatherId"
         };
 
         // 각 셀 값 생성기 (프로젝트 실제 게터에 맞춤)
