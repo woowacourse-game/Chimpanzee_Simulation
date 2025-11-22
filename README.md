@@ -38,10 +38,10 @@ flowchart TD
     A[Application Start<br/>ChimpanzeeSimulationApplication] --> B[SimulationRunner]
     B --> C[SimulationInitializer<br/>Create Initial State]
     C --> D[SimulationEngine<br/>run(...)]
-    D --> E{Turn < Max Turn?}
-    E -- yes --> F[TurnProcessor<br/>Process One Turn]
+    D --> E{More turns?}
+    E -->|yes| F[TurnProcessor<br/>Process One Turn]
     F --> E
-    E -- no --> G[Build and Print SimulationResult]
+    E -->|no| G[Build and Print SimulationResult]
 ```
 
 ### 한 턴 처리 파이프라인
