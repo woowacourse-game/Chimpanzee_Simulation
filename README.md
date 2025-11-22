@@ -35,27 +35,27 @@
 
 ```mermaid
 flowchart TD
-    A[애플리케이션 시작<br/>ChimpanzeeSimulationApplication] --> B[SimulationRunner]
-    B --> C[SimulationInitializer<br/>초기 상태 생성]
+    A[Application Start<br/>ChimpanzeeSimulationApplication] --> B[SimulationRunner]
+    B --> C[SimulationInitializer<br/>Create Initial State]
     C --> D[SimulationEngine<br/>run(...)]
-    D --> E{현재 턴 < 최대 턴?}
-    E -- 예 --> F[TurnProcessor<br/>한 턴 처리]
+    D --> E{Turn < Max Turn?}
+    E -- yes --> F[TurnProcessor<br/>Process One Turn]
     F --> E
-    E -- 아니오 --> G[SimulationResult 생성 및 출력]
+    E -- no --> G[Build and Print SimulationResult]
 ```
 
 ### 한 턴 처리 파이프라인
 
 ```mermaid
 flowchart TD
-    TP[TurnProcessorImpl.runTurn] --> W[EnvironmentService<br/>날씨/위험도 업데이트]
-    W --> A[AlphaSummaryService<br/>우두머리 요약 로그]
-    A --> AG[AgingService<br/>나이 증가 + 자연사 판정]
-    AG --> FP[FoodProductionService<br/>먹이 생산]
-    FP --> AR[AlphaResolutionService<br/>알파 선출/도전/결투]
-    AR --> FC[FoodConsumptionService<br/>먹이 소비/우선순위 배분]
-    FC --> R[ReproductionService<br/>출산/짝짓기/신규 개체 추가]
-    R --> N[턴 증가<br/>state.nextTurn()]
+    TP[TurnProcessorImpl.runTurn] --> W[EnvironmentService<br/>Update Weather & Danger]
+    W --> A[AlphaSummaryService<br/>Log Alpha Summary]
+    A --> AG[AgingService<br/>Aging & Natural Death]
+    AG --> FP[FoodProductionService<br/>Produce Food]
+    FP --> AR[AlphaResolutionService<br/>Alpha Election & Challenge]
+    AR --> FC[FoodConsumptionService<br/>Consume & Distribute Food]
+    FC --> R[ReproductionService<br/>Birth & Mating]
+    R --> N[Increase Turn<br/>state.nextTurn()]
 ```
 
 각 단계는 `TurnLog`에 요약 로그를 남기며, `SimulationEngineImpl`이 이를 콘솔에 출력합니다.
