@@ -109,8 +109,8 @@ public class Chimpanzee {
     private static int generateInitialStrength(AgeCategory ageCategory, Random random) {
         switch (ageCategory) {
             case INFANT:
-                // 0~30
-                return randomBetween(random, 0, 25);
+                // 1~25
+                return randomBetween(random, 1, 25);
             case JUVENILE:
                 // 20~60
                 return randomBetween(random, 20, 60);
@@ -332,9 +332,9 @@ public class Chimpanzee {
 
         Sex newSex = generateInitialSex(random);
 
-        // 능력치 유전
-        int newStrength = inheritStat(father.strength, mother.strength, random);
-        int newAgility = inheritStat(father.agility, mother.agility, random);
+        // 힘/민첩은 아기 구간에서 시작하도록 낮은 범위에서 랜덤 부여
+        int newStrength = randomBetween(random, 1, 10);
+        int newAgility = randomBetween(random, 1, 10);
         int newLongevity = inheritStat(father.longevity, mother.longevity, random);
 
         // 새로운 침팬지의 체력은 100
