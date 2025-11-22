@@ -67,14 +67,19 @@ public class TurnProcessorImpl implements TurnProcessor {
         }
 
         Weather before = env.weather();
+        double dangerBefore = env.dangerLevel();
         Random random = state.random();
         Weather after = env.updateWeather(random);
+        env.adjustDangerLevelForWeather(after);
+        double dangerAfter = env.dangerLevel();
 
         if (before == after) {
-            // 변동이 없는 경우는 로그를 생략하거나 짧게 남길 수 있다.
-            log.add("날씨 변화 없음 (현재: " + after + ")");
+            log.add("날씨 변화 없음 (현재: " + after + "), 위험도: "
+                    + String.format("%.2f", dangerBefore) + " → " + String.format("%.2f", dangerAfter));
         } else {
-            log.add("날씨 변화: " + before + " → " + after);
+            log.add("날씨 변화: " + before + " → " + after
+                    + ", 위험도: " + String.format("%.2f", dangerBefore)
+                    + " → " + String.format("%.2f", dangerAfter));
         }
     }
 

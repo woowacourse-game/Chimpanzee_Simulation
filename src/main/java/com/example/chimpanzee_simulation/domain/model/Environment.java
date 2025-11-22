@@ -74,6 +74,30 @@ public class Environment {
         return next;
     }
 
+    /**
+     * 현재 날씨에 따른 목표 위험도(target)에 맞추어
+     * dangerLevel을 부드럽게 보정한다.
+     *
+     * 예) dangerLevel = 0.8 * dangerLevel + 0.2 * target
+     */
+    public void adjustDangerLevelForWeather(Weather currentWeather) {
+        double target = switch (currentWeather) {
+            case SUNNY -> 0.1;
+            case NORMAL -> 0.2;
+            case RAINY -> 0.25;
+            case STORM -> 0.6;
+            case DROUGHT -> 0.7;
+        };
+
+        double updated = (this.dangerLevel * 0.8) + (target * 0.2);
+        if (updated < 0.0) {
+            updated = 0.0;
+        } else if (updated > 1.0) {
+            updated = 1.0;
+        }
+        this.dangerLevel = updated;
+    }
+
     private static Weather pickNextWeather(Random random, Weather[] candidates, double[] probabilities) {
         if (candidates.length != probabilities.length) {
             throw new IllegalArgumentException("candidates and probabilities must have same length");
