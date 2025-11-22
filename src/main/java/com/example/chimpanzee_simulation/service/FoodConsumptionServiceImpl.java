@@ -22,6 +22,8 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
 
     @Override
     public void consumeAndDistribute(SimulationState state, TurnLog log) {
+        log.add("먹이 분배 규칙: 침팬지는 기본 5의 먹이가 필요하며, 우두머리는 약 6의 먹이가 필요합니다.");
+
         Environment env = state.environment();
         int foodBefore = env.food();
         int remainingFood = foodBefore;
@@ -31,13 +33,16 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
                 .toList();
 
         if (candidates.isEmpty()) {
-            log.add("[FOOD_CONSUMPTION] no alive chimpanzees, skip consumption");
+            log.add("먹이를 소비할 살아있는 침팬지가 없습니다. 먹이 분배를 건너뜁니다.");
             return;
         }
 
         List<Chimpanzee> sorted = candidates.stream()
                 .sorted(Comparator.comparingInt(this::priorityLevel))
                 .toList();
+
+        List<Long> fullFed = new java.util.ArrayList<>();
+        List<Long> underFed = new java.util.ArrayList<>();
 
         for (Chimpanzee chimp : sorted) {
             int need = individualNeed(chimp);
@@ -50,11 +55,9 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
                 chimp.applyHealthChange(MAX_HUNGER_PENALTY);
                 handleStarvationDeathIfNeeded(chimp, log);
 
-                log.add("[FOOD_CONSUMPTION] chimp=" + chimpLogKey(chimp)
-                        + ", need=" + need
-                        + ", consumed=0"
-                        + ", fedRatio=0.0"
-                        + ", healthChange=" + MAX_HUNGER_PENALTY);
+                underFed.add(chimp.getId());
+
+                log.add("침팬지 ID " + chimp.getId() + "는 먹이를 전혀 먹지 못했습니다. (건강 " + MAX_HUNGER_PENALTY + " 감소)");
                 continue;
             }
 
@@ -66,11 +69,9 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
 
                 chimp.applyHealthChange(FULL_FED_HEALTH_BONUS);
 
-                log.add("[FOOD_CONSUMPTION] chimp=" + chimpLogKey(chimp)
-                        + ", need=" + need
-                        + ", consumed=" + consumed
-                        + ", fedRatio=1.0"
-                        + ", healthChange=+" + FULL_FED_HEALTH_BONUS);
+                fullFed.add(chimp.getId());
+
+                log.add("침팬지 ID " + chimp.getId() + "는 필요한 양(" + need + ")을 모두 먹었습니다. (건강 +" + FULL_FED_HEALTH_BONUS + ")");
             } else {
                 // 부분적으로만 먹는 경우 (partial-fed)
                 int consumed = remainingFood;
@@ -86,23 +87,23 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
                 chimp.applyHealthChange(penalty);
                 handleStarvationDeathIfNeeded(chimp, log);
 
-                log.add("[FOOD_CONSUMPTION] chimp=" + chimpLogKey(chimp)
-                        + ", need=" + need
-                        + ", consumed=" + consumed
-                        + ", fedRatio=" + String.format("%.2f", fedRatio)
-                        + ", healthChange=" + penalty);
+                underFed.add(chimp.getId());
+
+                log.add("침팬지 ID " + chimp.getId() + "는 필요한 양(" + need + ") 중 " + consumed + "만 섭취했습니다. (건강 " + penalty + " 감소)");
             }
         }
 
-        log.add("[FOOD_CONSUMPTION] turn=" + state.turn()
-                + ", foodBefore=" + foodBefore
-                + ", foodAfter=" + env.food());
+        log.add("정상적으로 먹이를 섭취한 침팬지 ID: " + formatIds(fullFed));
+        log.add("충분히 먹지 못한 침팬지 ID: " + formatIds(underFed));
+        log.add("먹이 소비 요약: 턴 " + state.turn()
+                + ", 소비 전=" + foodBefore
+                + ", 소비 후=" + env.food());
     }
 
     private void handleStarvationDeathIfNeeded(Chimpanzee chimp, TurnLog log) {
         if (chimp.alive() && chimp.health() <= 0) {
             chimp.applyAliveAndDeathReason(DeathReason.STARVATION);
-            log.add("[DEATH] chimp died by starvation");
+            log.add("침팬지 ID " + chimp.getId() + "가 굶주려 사망했습니다.");
         }
     }
 
@@ -157,11 +158,12 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
         return need;
     }
 
-    /**
-     * 로그용 키 – 아직 public id()가 없다면 hashCode 정도로 대체
-     * 나중에 Chimpanzee에 id() 추가하면 교체 가능
-     */
-    private String chimpLogKey(Chimpanzee chimp) {
-        return "@" + Integer.toHexString(System.identityHashCode(chimp));
+    private String formatIds(List<Long> ids) {
+        if (ids.isEmpty()) {
+            return "없음";
+        }
+        return ids.stream()
+                .map(String::valueOf)
+                .collect(java.util.stream.Collectors.joining(", "));
     }
 }

@@ -67,7 +67,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
                 .toList();
 
         if (candidates.isEmpty()) {
-            log.add("[ALPHA] No eligible candidates. Alpha remains empty.");
+            log.add("[우두머리] 조건을 만족하는 수컷이 없어 우두머리를 선출하지 못했습니다.");
             return;
         }
 
@@ -90,7 +90,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         winner.chimp.assignAlpha();
 
         log.add(String.format(
-                "[ALPHA] New alpha elected (no current alpha): id=%s, score=%.2f",
+                "[우두머리] 우두머리를 선출했습니다(기존 우두머리 없음): 침팬지 ID=%s, 점수=%.2f",
                 chimpLogKey(winner.chimp),
                 winner.score
         ));
@@ -111,7 +111,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         // 3-2. 확률적으로 도전 이벤트 발생 여부 결정
         double r = random.nextDouble();
         if (r >= CHALLENGE_PROBABILITY) {
-            log.add("[ALPHA] Alpha is weak but no challenge occurred this turn.");
+            log.add("[우두머리] 우두머리가 약하지만 이번 턴에는 도전이 발생하지 않았습니다.");
             return;
         }
 
@@ -125,14 +125,14 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
                 .toList();
 
         if (challengerCandidates.isEmpty()) {
-            log.add("[ALPHA] Alpha is weak, but no challenger is strong enough.");
+            log.add("[우두머리] 우두머리가 약하지만 도전할 만큼 강한 개체가 없습니다.");
             return;
         }
 
         Chimpanzee challenger = challengerCandidates.get(random.nextInt(challengerCandidates.size()));
 
         log.add(String.format(
-                "[ALPHA] Challenge occurred: alpha=%s vs challenger=%s",
+                "[우두머리] 도전 발생: 우두머리=%s vs 도전자=%s",
                 chimpLogKey(alpha),
                 chimpLogKey(challenger)
         ));
@@ -193,7 +193,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         loser.applyHealthChange(-damage);
 
         log.add(String.format(
-                "[ALPHA] Combat result: winner=%s, loser=%s, alphaScore=%.2f, challengerScore=%.2f, diff=%.2f, damage=%d",
+                "[우두머리] 결투 결과: 승자=%s, 패자=%s, 우두머리 점수=%.2f, 도전자 점수=%.2f, 점수차=%.2f, 피해=%d",
                 chimpLogKey(winner),
                 chimpLogKey(loser),
                 alphaScore,
@@ -206,13 +206,13 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         if (loser.alive() && loser.health() <= 0) {
             loser.applyAliveAndDeathReason(DeathReason.ALPHA_FIGHT);
             log.add(String.format(
-                    "[DEATH] Chimp died in alpha fight: id=%s, reason=ALPHA_FIGHT",
+                    "[사망] 우두머리 결투로 사망: 침팬지 ID=%s, 이유=ALPHA_FIGHT",
                     chimpLogKey(loser)
             ));
         } else if (!loser.alive()) {
             // 이미 다른 규칙에서 죽게 되어 있었을 수 있는 경우 방어적으로 로그
             log.add(String.format(
-                    "[DEATH] Loser was already dead before alpha fight resolution: id=%s",
+                    "[사망] 결투 판정 이전에 이미 사망한 상태였습니다: 침팬지 ID=%s",
                     chimpLogKey(loser)
             ));
         }
@@ -223,14 +223,14 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
             alpha.revokeAlpha();
             winner.assignAlpha();
             log.add(String.format(
-                    "[ALPHA] Alpha has changed: newAlpha=%s (oldAlpha=%s)",
+                    "[우두머리] 우두머리 교체: 새 우두머리=%s (이전 우두머리=%s)",
                     chimpLogKey(winner),
                     chimpLogKey(alpha)
             ));
         } else {
             // 기존 알파 승리 → 알파 유지
             log.add(String.format(
-                    "[ALPHA] Alpha maintained: alpha=%s",
+                    "[우두머리] 우두머리 유지: %s",
                     chimpLogKey(alpha)
             ));
         }
