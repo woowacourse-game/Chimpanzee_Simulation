@@ -34,28 +34,28 @@
 시작부터 종료까지의 고수준 흐름은 다음과 같습니다.
 
 ```mermaid
-flowchart TD
-    A[Application Start<br/>ChimpanzeeSimulationApplication] --> B[SimulationRunner]
-    B --> C[SimulationInitializer<br/>Create Initial State]
-    C --> D[SimulationEngine<br/>run(...)]
-    D --> E{More turns?}
-    E -->|yes| F[TurnProcessor<br/>Process One Turn]
-    F --> E
-    E -->|no| G[Build and Print SimulationResult]
+graph TD;
+    A[Application Start<br/>ChimpanzeeSimulationApplication] --> B[SimulationRunner];
+    B --> C[SimulationInitializer<br/>Create Initial State];
+    C --> D[SimulationEngine<br/>run(...)];
+    D --> E{More turns remaining?};
+    E -->|yes| F[TurnProcessor<br/>Process One Turn];
+    F --> E;
+    E -->|no| G[Build and Print SimulationResult];
 ```
 
 ### 한 턴 처리 파이프라인
 
 ```mermaid
-flowchart TD
-    TP[TurnProcessorImpl.runTurn] --> W[EnvironmentService<br/>Update Weather & Danger]
-    W --> A[AlphaSummaryService<br/>Log Alpha Summary]
-    A --> AG[AgingService<br/>Aging & Natural Death]
-    AG --> FP[FoodProductionService<br/>Produce Food]
-    FP --> AR[AlphaResolutionService<br/>Alpha Election & Challenge]
-    AR --> FC[FoodConsumptionService<br/>Consume & Distribute Food]
-    FC --> R[ReproductionService<br/>Birth & Mating]
-    R --> N[Increase Turn<br/>state.nextTurn()]
+graph TD;
+    TP[TurnProcessorImpl.runTurn] --> W[EnvironmentService<br/>Update Weather & Danger];
+    W --> A[AlphaSummaryService<br/>Log Alpha Summary];
+    A --> AG[AgingService<br/>Aging & Natural Death];
+    AG --> FP[FoodProductionService<br/>Produce Food];
+    FP --> AR[AlphaResolutionService<br/>Alpha Election & Challenge];
+    AR --> FC[FoodConsumptionService<br/>Consume & Distribute Food];
+    FC --> R[ReproductionService<br/>Birth & Mating];
+    R --> N[Increase Turn<br/>state.nextTurn()];
 ```
 
 각 단계는 `TurnLog`에 요약 로그를 남기며, `SimulationEngineImpl`이 이를 콘솔에 출력합니다.
