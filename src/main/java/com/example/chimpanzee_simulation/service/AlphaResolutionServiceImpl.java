@@ -192,14 +192,19 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         int damage = calculateDamage(diff, random);
         loser.applyHealthChange(-damage);
 
+        // 승자도 결투로 인한 피로 누적(소모)을 반영한다.
+        int winnerDamage = Math.max(5, damage / 4);
+        winner.applyHealthChange(-winnerDamage);
+
         log.add(String.format(
-                "[우두머리] 결투 결과: 승자=%s, 패자=%s, 우두머리 점수=%.2f, 도전자 점수=%.2f, 점수차=%.2f, 피해=%d",
+                "[우두머리] 결투 결과: 승자=%s, 패자=%s, 우두머리 점수=%.2f, 도전자 점수=%.2f, 점수차=%.2f, 패자 피해=%d, 승자 피해=%d",
                 chimpLogKey(winner),
                 chimpLogKey(loser),
                 alphaScore,
                 challengerScore,
                 diff,
-                damage
+                damage,
+                winnerDamage
         ));
 
         // 사망 여부 처리
