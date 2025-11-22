@@ -143,14 +143,14 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
 
     /**
      * 알파 약화/노화 조건:
-     * - health < 50
-     * - 또는 age > longevity * 0.8
+     * - health < 70
+     * - 또는 age > longevity * 0.7
      */
     private boolean isAlphaWeak(Chimpanzee alpha) {
-        if (alpha.health() < 50) {
+        if (alpha.health() < 70) {
             return true;
         }
-        return alpha.getAge() > alpha.getLongevity() * 0.8;
+        return alpha.getAge() > alpha.getLongevity() * 0.7;
     }
 
     /**
