@@ -1,5 +1,6 @@
 package com.example.chimpanzee_simulation.service;
 
+import com.example.chimpanzee_simulation.domain.model.Chimpanzee;
 import com.example.chimpanzee_simulation.domain.model.SimulationState;
 import com.example.chimpanzee_simulation.domain.model.TurnLog;
 import com.example.chimpanzee_simulation.domain.model.TurnResult;
@@ -32,8 +33,7 @@ public class TurnProcessorImpl implements TurnProcessor {
 
         TurnLog log = new TurnLog(currentTurn);
         log.add("턴 " + currentTurn + " 처리 시작.");
-
-        // 나중에 여기 안에 환경/먹이/나이/건강/사망 룰이 들어감
+        addAlphaSummary(state, log);
 
         // 0) 나이 증가 + 자연사 판정
         agingService.applyAgingAndNaturalDeath(state, log);
@@ -52,5 +52,24 @@ public class TurnProcessorImpl implements TurnProcessor {
         state.nextTurn();
 
         return new TurnResult(state, log);
+    }
+
+    private void addAlphaSummary(SimulationState state, TurnLog log) {
+        Chimpanzee alpha = state.chimpanzees().stream()
+                .filter(Chimpanzee::alive)
+                .filter(Chimpanzee::alpha)
+                .findFirst()
+                .orElse(null);
+
+        if (alpha == null) {
+            log.add("현재 우두머리 없음");
+            return;
+        }
+
+        String summary = "우두머리 침팬지: ID " + alpha.getId()
+                + " (체력 " + alpha.health()
+                + ", 힘 " + alpha.getStrength()
+                + ", 민첩 " + alpha.getAgility() + ")";
+        log.add(summary);
     }
 }
