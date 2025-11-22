@@ -21,7 +21,7 @@ public class AlphaSummaryServiceImpl implements AlphaSummaryService {
             return;
         }
 
-        String summary = "우두머리 침팬지: ID " + alpha.getId()
+        String summary = "우두머리 개체 #" + alpha.getId()
                 + " (체력 " + alpha.health()
                 + ", 힘 " + alpha.getStrength()
                 + ", 민첩 " + alpha.getAgility() + ")";

@@ -57,7 +57,7 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
 
                 underFed.add(chimp.getId());
 
-                log.add("침팬지 ID " + chimp.getId() + "는 먹이를 전혀 먹지 못했습니다. (건강 " + MAX_HUNGER_PENALTY + " 감소)");
+                log.add("개체 #" + chimp.getId() + "는 먹이를 전혀 먹지 못했습니다. (건강 " + MAX_HUNGER_PENALTY + " 감소)");
                 continue;
             }
 
@@ -71,7 +71,7 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
 
                 fullFed.add(chimp.getId());
 
-                log.add("침팬지 ID " + chimp.getId() + "는 필요한 양(" + need + ")을 모두 먹었습니다. (건강 +" + FULL_FED_HEALTH_BONUS + ")");
+                log.add("개체 #" + chimp.getId() + "는 필요한 양(" + need + ")을 모두 먹었습니다. (건강 +" + FULL_FED_HEALTH_BONUS + ")");
             } else {
                 // 부분적으로만 먹는 경우 (partial-fed)
                 int consumed = remainingFood;
@@ -89,7 +89,7 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
 
                 underFed.add(chimp.getId());
 
-                log.add("침팬지 ID " + chimp.getId() + "는 필요한 양(" + need + ") 중 " + consumed + "만 섭취했습니다. (건강 " + penalty + " 감소)");
+                log.add("개체 #" + chimp.getId() + "는 필요한 양(" + need + ") 중 " + consumed + "만 섭취했습니다. (건강 " + penalty + " 감소)");
             }
         }
 
@@ -103,7 +103,7 @@ public class FoodConsumptionServiceImpl implements FoodConsumptionService {
     private void handleStarvationDeathIfNeeded(Chimpanzee chimp, TurnLog log) {
         if (chimp.alive() && chimp.health() <= 0) {
             chimp.applyAliveAndDeathReason(DeathReason.STARVATION);
-            log.add("침팬지 ID " + chimp.getId() + "가 굶주려 사망했습니다.");
+            log.add("개체 #" + chimp.getId() + "가 굶주려 사망했습니다.");
         }
     }
 
