@@ -14,8 +14,8 @@ import java.util.Random;
 @Service
 public class AlphaResolutionServiceImpl implements AlphaResolutionService {
 
-    // 알파 도전 이벤트 발생 확률 (20%)
-    private static final double CHALLENGE_PROBABILITY = 0.2;
+    // 알파 도전 이벤트 발생 확률 (30%)
+    private static final double CHALLENGE_PROBABILITY = 0.4;
 
     @Override
     public void resolveAlpha(SimulationState state, TurnLog log) {
@@ -57,7 +57,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
      */
     private void electAlpha(SimulationState state, TurnLog log) {
 
-        Random random = createRandomFromState(state);
+        Random random = state.random();
 
         List<Chimpanzee> candidates = state.chimpanzees().stream()
                 .filter(Chimpanzee::alive)
@@ -101,7 +101,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
     // ==========================
 
     private void handleAlphaChallenge(SimulationState state, TurnLog log, Chimpanzee alpha) {
-        Random random = createRandomFromState(state);
+        Random random = state.random();
 
         // 3-1. 알파 약화/노화 상태인지 판단
         if (!isAlphaWeak(alpha)) {
@@ -121,7 +121,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
                 .filter(c -> c.sex() == Sex.MALE)
                 .filter(c -> c.ageCategory() == AgeCategory.YOUNG_ADULT || c.ageCategory() == AgeCategory.ADULT)
                 .filter(c -> c != alpha)
-                .filter(c -> c.getStrength() > alpha.getStrength() * 0.8)
+                .filter(c -> c.getStrength() > alpha.getStrength() * 0.7)
                 .toList();
 
         if (challengerCandidates.isEmpty()) {
@@ -143,14 +143,14 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
 
     /**
      * 알파 약화/노화 조건:
-     * - health < 50
-     * - 또는 age > longevity * 0.8
+     * - health < 70
+     * - 또는 age > longevity * 0.7
      */
     private boolean isAlphaWeak(Chimpanzee alpha) {
-        if (alpha.health() < 50) {
+        if (alpha.health() < 70) {
             return true;
         }
-        return alpha.getAge() > alpha.getLongevity() * 0.8;
+        return alpha.getAge() > alpha.getLongevity() * 0.7;
     }
 
     /**
@@ -192,14 +192,19 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         int damage = calculateDamage(diff, random);
         loser.applyHealthChange(-damage);
 
+        // 승자도 결투로 인한 피로 누적(소모)을 반영한다.
+        int winnerDamage = Math.max(5, damage / 4);
+        winner.applyHealthChange(-winnerDamage);
+
         log.add(String.format(
-                "[우두머리] 결투 결과: 승자=%s, 패자=%s, 우두머리 점수=%.2f, 도전자 점수=%.2f, 점수차=%.2f, 피해=%d",
+                "[우두머리] 결투 결과: 승자=%s, 패자=%s, 우두머리 점수=%.2f, 도전자 점수=%.2f, 점수차=%.2f, 패자 피해=%d, 승자 피해=%d",
                 chimpLogKey(winner),
                 chimpLogKey(loser),
                 alphaScore,
                 challengerScore,
                 diff,
-                damage
+                damage,
+                winnerDamage
         ));
 
         // 사망 여부 처리
@@ -254,10 +259,6 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         int extraBase = random.nextInt(61); // 0~60
         int extraDamage = (int) Math.round(extraBase * severityFactor);
         return 20 + extraDamage;
-    }
-
-    private Random createRandomFromState(SimulationState state) {
-        return new Random(state.randomSeed());
     }
 
     private String chimpLogKey(Chimpanzee chimp) {
