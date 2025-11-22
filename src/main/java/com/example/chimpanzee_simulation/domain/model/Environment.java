@@ -33,6 +33,66 @@ public class Environment {
         return new Environment(food, weather, dangerLevel);
     }
 
+    /**
+     * 현재 날씨를 기반으로 다음 턴의 날씨를 결정하는 규칙.
+     */
+    public Weather updateWeather(Random random) {
+        if (random == null) {
+            throw new IllegalArgumentException("random must not be null");
+        }
+
+        Weather current = (weather != null) ? weather : Weather.NORMAL;
+        Weather next = switch (current) {
+            case SUNNY -> pickNextWeather(
+                    random,
+                    new Weather[]{Weather.SUNNY, Weather.NORMAL, Weather.RAINY, Weather.STORM, Weather.DROUGHT},
+                    new double[]{0.5, 0.3, 0.1, 0.05, 0.05}
+            );
+            case NORMAL -> pickNextWeather(
+                    random,
+                    new Weather[]{Weather.NORMAL, Weather.SUNNY, Weather.RAINY, Weather.STORM, Weather.DROUGHT},
+                    new double[]{0.4, 0.2, 0.2, 0.1, 0.1}
+            );
+            case RAINY -> pickNextWeather(
+                    random,
+                    new Weather[]{Weather.RAINY, Weather.NORMAL, Weather.STORM, Weather.SUNNY},
+                    new double[]{0.4, 0.3, 0.2, 0.1}
+            );
+            case STORM -> pickNextWeather(
+                    random,
+                    new Weather[]{Weather.STORM, Weather.RAINY, Weather.NORMAL},
+                    new double[]{0.3, 0.4, 0.3}
+            );
+            case DROUGHT -> pickNextWeather(
+                    random,
+                    new Weather[]{Weather.DROUGHT, Weather.SUNNY, Weather.NORMAL},
+                    new double[]{0.4, 0.3, 0.3}
+            );
+        };
+
+        this.weather = next;
+        return next;
+    }
+
+    private static Weather pickNextWeather(Random random, Weather[] candidates, double[] probabilities) {
+        if (candidates.length != probabilities.length) {
+            throw new IllegalArgumentException("candidates and probabilities must have same length");
+        }
+
+        double r = random.nextDouble();
+        double cumulative = 0.0;
+
+        for (int i = 0; i < candidates.length; i++) {
+            cumulative += probabilities[i];
+            if (r < cumulative) {
+                return candidates[i];
+            }
+        }
+
+        // 부동소수점 오차 등을 대비해 마지막 후보를 반환
+        return candidates[candidates.length - 1];
+    }
+
     // 테스트용 getter
     int getFood() {
         return food;
