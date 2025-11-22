@@ -31,7 +31,7 @@ public class TurnProcessorImpl implements TurnProcessor {
         int currentTurn = state.turn();
 
         TurnLog log = new TurnLog(currentTurn);
-        log.add("Turn " + currentTurn + " processed (stub).");
+        log.add("턴 " + currentTurn + " 처리 시작.");
 
         // 나중에 여기 안에 환경/먹이/나이/건강/사망 룰이 들어감
 

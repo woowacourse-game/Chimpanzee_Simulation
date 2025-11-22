@@ -35,10 +35,10 @@ public class FoodProductionServiceImpl implements FoodProductionService {
 
         env.addFood(produced);
 
-        log.add("[FOOD_PRODUCTION] produced=" + produced
-                + ", living=" + living
-                + ", weather=" + weather
-                + ", danger=" + dangerLevel);
+        log.add("먹이 생산: 생산량=" + produced
+                + ", 생존 개체 수=" + living
+                + ", 날씨=" + weather
+                + ", 위험도=" + String.format("%.2f", dangerLevel));
 
         return produced;
     }
