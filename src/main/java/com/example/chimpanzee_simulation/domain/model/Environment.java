@@ -28,7 +28,8 @@ public class Environment {
         int idx = random.nextInt(weathers.length);
         Weather weather = weathers[idx];
 
-        double dangerLevel = random.nextDouble() * 0.5;
+        // 초기 위험도: 0.3 ~ 0.7 구간에서 시작
+        double dangerLevel = 0.3 + random.nextDouble() * 0.4;
 
         return new Environment(food, weather, dangerLevel);
     }
