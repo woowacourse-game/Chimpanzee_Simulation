@@ -1,9 +1,6 @@
 package com.example.chimpanzee_simulation.service;
 
-import com.example.chimpanzee_simulation.domain.model.SimulationConfig;
-import com.example.chimpanzee_simulation.domain.model.SimulationResult;
-import com.example.chimpanzee_simulation.domain.model.SimulationState;
-import com.example.chimpanzee_simulation.domain.model.TurnResult;
+import com.example.chimpanzee_simulation.domain.model.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,6 +20,7 @@ public class SimulationEngineImpl implements SimulationEngine {
             TurnResult result = turnProcessor.runTurn(state);
             state = result.nextState();
             // 나중에 여기서 턴 로그를 파일/콘솔로 출력하거나 수집 가능
+            printTurnLog(result.turnLog());
         }
 
         int finalPopulation = state.chimpanzees().size();
@@ -34,5 +32,12 @@ public class SimulationEngineImpl implements SimulationEngine {
                 finalPopulation,
                 extinction
         );
+    }
+    private void printTurnLog(TurnLog log) {
+        System.out.println("---------- Turn " + log.turn() + " ----------");
+        for (String msg : log.messages()) {
+            System.out.println(msg);
+        }
+        System.out.println();
     }
 }
