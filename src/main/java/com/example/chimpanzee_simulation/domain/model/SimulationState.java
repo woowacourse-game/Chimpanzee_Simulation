@@ -1,5 +1,6 @@
 package com.example.chimpanzee_simulation.domain.model;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -8,7 +9,7 @@ public class SimulationState {
     private int turnNumber;                     // 현재 턴 번호
     private List<Chimpanzee> chimpanzees;
     private Environment environment;
-
+    private long nextChimpId;
     private Long randomSeed;  // 재현성을 위해 필요하면 사용
     private final Random random;
 
@@ -18,6 +19,16 @@ public class SimulationState {
         this.environment = environment;
         this.randomSeed = randomSeed;
         this.random = new Random(randomSeed);
+        this.nextChimpId = chimpanzees.stream()
+                .map(Chimpanzee::getId)
+                .filter(id -> id != null)
+                .max(Comparator.naturalOrder())
+                .map(max-> max+1)
+                .orElse(1L);
+    }
+
+    public long allocateChimpId() {
+        return nextChimpId++;
     }
 
     // 테스트용 getter

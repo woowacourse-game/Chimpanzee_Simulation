@@ -54,7 +54,7 @@ public class ReproductionServiceImpl implements ReproductionService {
             }
 
             Chimpanzee father = fatherOpt.get();
-            Long childId = generateNewId(state);
+            Long childId = state.allocateChimpId();
 
             Chimpanzee child = Chimpanzee.createOffspring(
                     childId,
@@ -122,14 +122,6 @@ public class ReproductionServiceImpl implements ReproductionService {
                     + ", 암컷: 개체" + female.getId()
                     + ", 성공확률:" + String.format("%.0f%%", prob * 100));
         }
-    }
-
-    private Long generateNewId(SimulationState state) {
-        return state.chimpanzees().stream()
-                .map(Chimpanzee::getId)
-                .filter(Objects::nonNull)
-                .max(Long::compareTo)
-                .orElse(0L) + 1;
     }
 
     private Optional<Chimpanzee> findById(SimulationState state, Long id) {
