@@ -57,7 +57,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
      */
     private void electAlpha(SimulationState state, TurnLog log) {
 
-        Random random = createRandomFromState(state);
+        Random random = state.random();
 
         List<Chimpanzee> candidates = state.chimpanzees().stream()
                 .filter(Chimpanzee::alive)
@@ -101,7 +101,7 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
     // ==========================
 
     private void handleAlphaChallenge(SimulationState state, TurnLog log, Chimpanzee alpha) {
-        Random random = createRandomFromState(state);
+        Random random = state.random();
 
         // 3-1. 알파 약화/노화 상태인지 판단
         if (!isAlphaWeak(alpha)) {
@@ -254,10 +254,6 @@ public class AlphaResolutionServiceImpl implements AlphaResolutionService {
         int extraBase = random.nextInt(61); // 0~60
         int extraDamage = (int) Math.round(extraBase * severityFactor);
         return 20 + extraDamage;
-    }
-
-    private Random createRandomFromState(SimulationState state) {
-        return new Random(state.randomSeed());
     }
 
     private String chimpLogKey(Chimpanzee chimp) {
