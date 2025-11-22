@@ -25,18 +25,23 @@ public class SimulationRunner implements CommandLineRunner {
 
         // 시뮬레이션 설정
         SimulationConfig config = new SimulationConfig(
-                "Default Colony",
-                50
+                "기본 생태계",
+                Integer.MAX_VALUE
         );
 
         // 엔진 실행
         SimulationResult result = engine.run(initialState, config);
 
         // 요약 결과 출력
-        System.out.println("===== Simulation Finished =====");
-        System.out.println("Colony: " + result.colonyName());
-        System.out.println("Total turns: " + result.totalTurns());
-        System.out.println("Final population: " + result.finalPopulation());
-        System.out.println("Extinction: " + result.extinction());
+        System.out.println("===== 🐒 시뮬레이션 종료 🐒 =====");
+        System.out.println("🌴 무리 이름: " + result.colonyName());
+        System.out.println("⏱️ 총 진행 턴: " + result.totalTurns() + "턴");
+        System.out.println("👥 최종 개체 수: " + result.finalPopulation() + "마리");
+        System.out.print("💀 전멸 여부: ");
+        if (result.extinction()) {
+            System.out.println("예");
+        } else {
+            System.out.println("아니오");
+        }
     }
 }
