@@ -60,8 +60,8 @@ public class Chimpanzee {
         Sex sex = generateInitialSex(random);
 
         int health = generateInitialHealth(random);
-        int strength = generateInitialStrength(random);
-        int agility = generateInitialAgility(random);
+        int strength = generateInitialStrength(ageCategory, random);
+        int agility = generateInitialAgility(ageCategory, random);
 
         double reproductionRate = generateInitialReproductionRate(random);
         int longevity = generateInitialLongevity(random);
@@ -105,14 +105,36 @@ public class Chimpanzee {
         return 60 + random.nextInt(41);
     }
 
-    // 초기 힘 능력치를 생성한다. 0~100
-    private static int generateInitialStrength(Random random) {
-        return random.nextInt(101); // 0~100
+    // 연령대 기반 초기 힘 능력치를 생성한다.
+    private static int generateInitialStrength(AgeCategory ageCategory, Random random) {
+        switch (ageCategory) {
+            case INFANT:
+                // 1~25
+                return randomBetween(random, 1, 25);
+            case JUVENILE:
+                // 20~60
+                return randomBetween(random, 20, 60);
+            case ADOLESCENT:
+                // 40~80
+                return randomBetween(random, 40, 80);
+            case YOUNG_ADULT:
+                // 50~90
+                return randomBetween(random, 50, 90);
+            case ADULT:
+                // 60~95
+                return randomBetween(random, 60, 95);
+            case ELDER:
+                // 40~80
+                return randomBetween(random, 40, 80);
+            default:
+                return random.nextInt(101);
+        }
     }
 
-    // 초기 민첩 능력치를 생성한다. 0~100
-    private static int generateInitialAgility(Random random) {
-        return random.nextInt(101); // 0~100
+    // 연령대 기반 초기 민첩 능력치를 생성한다. (현재는 힘과 동일 범위)
+    private static int generateInitialAgility(AgeCategory ageCategory, Random random) {
+        // 힘과 동일한 분포를 사용하지만, 필요 시 다르게 조정 가능
+        return generateInitialStrength(ageCategory, random);
     }
 
     private static double generateInitialReproductionRate(Random random) {
@@ -133,6 +155,111 @@ public class Chimpanzee {
         return AgeCategory.ELDER;
     }
 
+    /**
+     * 연령대별 능력치 성장/하락 곡선에서
+     * 한 살 증가 시 strength/agility에 적용할 변화량(Δ)를 샘플링한다.
+     *
+     * 이 메서드는 아직 어디에서도 호출되지 않으며,
+     * 이후 나이 증가 로직에 연결하여 실제 stat 성장/하락을 적용하는 데 사용된다.
+     */
+    private static int sampleGrowthDelta(AgeCategory ageCategory, Random random) {
+        double r = random.nextDouble();
+
+        switch (ageCategory) {
+            case INFANT:
+                // INFANT (0–4세)
+                // 20%: +1~+2, 60%: +3~+5, 20%: +6~+7
+                if (r < 0.2) {
+                    return randomBetween(random, 1, 2);
+                } else if (r < 0.8) {
+                    return randomBetween(random, 3, 5);
+                } else {
+                    return randomBetween(random, 6, 7);
+                }
+            case JUVENILE:
+                // JUVENILE (5–7세)
+                // 20%: +1~+2, 60%: +3~+4, 20%: +5~+6
+                if (r < 0.2) {
+                    return randomBetween(random, 1, 2);
+                } else if (r < 0.8) {
+                    return randomBetween(random, 3, 4);
+                } else {
+                    return randomBetween(random, 5, 6);
+                }
+            case ADOLESCENT:
+                // ADOLESCENT (8–12세)
+                // 30%: +1~+2, 50%: +3~+4, 20%: +5
+                if (r < 0.3) {
+                    return randomBetween(random, 1, 2);
+                } else if (r < 0.8) {
+                    return randomBetween(random, 3, 4);
+                } else {
+                    return 5;
+                }
+            case YOUNG_ADULT:
+                // YOUNG_ADULT (13–20세)
+                // 10%: +2~+3, 40%: 0~+1, 30%: -1~0, 20%: -2~-3
+                if (r < 0.1) {
+                    return randomBetween(random, 2, 3);
+                } else if (r < 0.5) {
+                    return randomBetween(random, 0, 1);
+                } else if (r < 0.8) {
+                    return randomBetween(random, -1, 0);
+                } else {
+                    return randomBetween(random, -3, -2);
+                }
+            case ADULT:
+                // ADULT (21–35세)
+                // 5%: +2, 25%: 0~+1, 40%: -1~-2, 30%: -3~-4
+                if (r < 0.05) {
+                    return 2;
+                } else if (r < 0.30) {
+                    return randomBetween(random, 0, 1);
+                } else if (r < 0.70) {
+                    return randomBetween(random, -2, -1);
+                } else {
+                    return randomBetween(random, -4, -3);
+                }
+            case ELDER:
+                // ELDER (36세 이상)
+                // 5%: +1, 20%: 0, 35%: -1~-2, 40%: -3~-5
+                if (r < 0.05) {
+                    return 1;
+                } else if (r < 0.25) {
+                    return 0;
+                } else if (r < 0.60) {
+                    return randomBetween(random, -2, -1);
+                } else {
+                    return randomBetween(random, -5, -3);
+                }
+            default:
+                // 방어적 기본값: 변화 없음
+                return 0;
+        }
+    }
+
+    private static int randomBetween(Random random, int minInclusive, int maxInclusive) {
+        if (minInclusive == maxInclusive) {
+            return minInclusive;
+        }
+        if (minInclusive > maxInclusive) {
+            int tmp = minInclusive;
+            minInclusive = maxInclusive;
+            maxInclusive = tmp;
+        }
+        return minInclusive + random.nextInt(maxInclusive - minInclusive + 1);
+    }
+
+    private static int clampStat(int value) {
+        if (value < 0) {
+            return 0;
+        }
+        if (value > 100) {
+            return 100;
+        }
+        return value;
+    }
+
     // 나이 증가 체크
     public boolean incrementAgeIfNeeded(int currentTurn) {
         int diff = currentTurn - this.birthTurn;
@@ -145,6 +272,20 @@ public class Chimpanzee {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 현재 연령대에 따른 성장 곡선을 기반으로
+     * strength / agility를 한 살 증가분만큼 갱신한다.
+     */
+    public void applyAgeBasedGrowth(Random random) {
+        if (random == null) {
+            throw new IllegalArgumentException("random must not be null");
+        }
+
+        int delta = sampleGrowthDelta(this.ageCategory, random);
+        this.strength = clampStat(this.strength + delta);
+        this.agility = clampStat(this.agility + delta);
     }
 
     // 자연사 판정
@@ -215,9 +356,9 @@ public class Chimpanzee {
 
         Sex newSex = generateInitialSex(random);
 
-        // 능력치 유전
-        int newStrength = inheritStat(father.strength, mother.strength, random);
-        int newAgility = inheritStat(father.agility, mother.agility, random);
+        // 힘/민첩은 아기 구간에서 시작하도록 낮은 범위에서 랜덤 부여
+        int newStrength = randomBetween(random, 1, 10);
+        int newAgility = randomBetween(random, 1, 10);
         int newLongevity = inheritStat(father.longevity, mother.longevity, random);
 
         // 새로운 침팬지의 체력은 100
