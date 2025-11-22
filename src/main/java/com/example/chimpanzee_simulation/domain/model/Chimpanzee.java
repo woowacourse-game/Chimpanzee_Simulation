@@ -250,6 +250,16 @@ public class Chimpanzee {
         return minInclusive + random.nextInt(maxInclusive - minInclusive + 1);
     }
 
+    private static int clampStat(int value) {
+        if (value < 0) {
+            return 0;
+        }
+        if (value > 100) {
+            return 100;
+        }
+        return value;
+    }
+
     // 나이 증가 체크
     public boolean incrementAgeIfNeeded(int currentTurn) {
         int diff = currentTurn - this.birthTurn;
@@ -262,6 +272,20 @@ public class Chimpanzee {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 현재 연령대에 따른 성장 곡선을 기반으로
+     * strength / agility를 한 살 증가분만큼 갱신한다.
+     */
+    public void applyAgeBasedGrowth(Random random) {
+        if (random == null) {
+            throw new IllegalArgumentException("random must not be null");
+        }
+
+        int delta = sampleGrowthDelta(this.ageCategory, random);
+        this.strength = clampStat(this.strength + delta);
+        this.agility = clampStat(this.agility + delta);
     }
 
     // 자연사 판정
