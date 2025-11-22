@@ -37,7 +37,7 @@
 graph TD;
     A[Application Start<br/>ChimpanzeeSimulationApplication] --> B[SimulationRunner];
     B --> C[SimulationInitializer<br/>Create Initial State];
-    C --> D[SimulationEngine<br/>run(...)];
+    C --> D[SimulationEngine<br/>run];
     D --> E{More turns remaining?};
     E -->|yes| F[TurnProcessor<br/>Process One Turn];
     F --> E;
@@ -55,7 +55,7 @@ graph TD;
     FP --> AR[AlphaResolutionService<br/>Alpha Election & Challenge];
     AR --> FC[FoodConsumptionService<br/>Consume & Distribute Food];
     FC --> R[ReproductionService<br/>Birth & Mating];
-    R --> N[Increase Turn<br/>state.nextTurn()];
+    R --> N[Increase Turn<br/>state.nextTurn];
 ```
 
 각 단계는 `TurnLog`에 요약 로그를 남기며, `SimulationEngineImpl`이 이를 콘솔에 출력합니다.
