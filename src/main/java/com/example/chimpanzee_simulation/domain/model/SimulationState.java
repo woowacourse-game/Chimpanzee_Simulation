@@ -2,6 +2,7 @@ package com.example.chimpanzee_simulation.domain.model;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 public class SimulationState {
 
@@ -10,12 +11,14 @@ public class SimulationState {
     private Environment environment;
     private long nextChimpId;
     private Long randomSeed;  // 재현성을 위해 필요하면 사용
+    private final Random random;
 
     public SimulationState(int turnNumber, List<Chimpanzee> chimpanzees, Environment environment, long randomSeed) {
         this.turnNumber = turnNumber;
         this.chimpanzees = chimpanzees;
         this.environment = environment;
         this.randomSeed = randomSeed;
+        this.random = new Random(randomSeed);
         this.nextChimpId = chimpanzees.stream()
                 .map(Chimpanzee::getId)
                 .filter(id -> id != null)
@@ -43,6 +46,10 @@ public class SimulationState {
 
     public long randomSeed() {
         return randomSeed;
+    }
+
+    public Random random() {
+        return random;
     }
 
     public void nextTurn() {
